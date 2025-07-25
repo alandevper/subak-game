@@ -1,10 +1,95 @@
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* 스크롤바 제거 */
+  background-color: #f0f0f0;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+h1 {
+  font-size: clamp(24px, 5vw, 40px); /* 화면 크기에 따라 조절, 최소/최대 크기 지정 */
+  margin: 0;
+  margin-bottom: 10px;
+  color: #333;
+  text-align: center;
+}
+
+.game-container {
+  width: 100%;
+  max-width: 400px; /* 데스크탑에서 너무 커지지 않도록 */
+  aspect-ratio: 400 / 700; /* 게임 화면 비율 유지 */
+  border: 2px solid #333;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background-color: white;
+}
+
+.game-info {
+  margin-top: 15px;
+  text-align: center;
+  font-size: clamp(16px, 4vw, 22px);
+  color: #444;
+}
+
+.game-info p {
+  margin: 4px 0;
+}
+
+.game-over-container {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.game-over-container p {
+  color: red;
+  font-weight: bold;
+  font-size: clamp(20px, 5vw, 30px);
+  margin: 0 0 10px 0;
+}
+
+.game-over-container button {
+  padding: 10px 20px;
+  font-size: clamp(16px, 4vw, 20px);
+  cursor: pointer;
+  border: none;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.game-over-container button:hover {
+  background-color: #45a049;
+}
+
+.loading-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(18px, 4vw, 24px);
+  color: #333;
+}
+
 @keyframes fade-out-scale-up {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
+  from {
+    transform: scale(0.5);
     opacity: 1;
   }
-  100% {
-    transform: translate(-50%, -50%) scale(1.5);
+  to {
+    transform: scale(1.5);
     opacity: 0;
   }
 }
@@ -14,21 +99,16 @@
   border-radius: 50%;
   pointer-events: none;
   animation: fade-out-scale-up 0.5s forwards;
+  transform-origin: center;
 }
 
-/* 모바일 반응형 스타일 */
-@media (max-width: 480px) {
-  .App {
-    padding: 10px;
-  }
-
-  h1 {
-    font-size: 24px;
-  }
-
-  div[style*="width: 400px"] {
-    width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 400 / 700;
-  }
+.preview-fruit {
+  position: absolute;
+  top: 0px;
+  border-radius: 50%;
+  opacity: 0.6;
+  pointer-events: none;
+  display: none;
+  z-index: 1;
+  background-size: 100% 100%;
 }
