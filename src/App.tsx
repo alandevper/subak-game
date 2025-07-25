@@ -84,7 +84,6 @@ function App() {
       gameOverTimerRef.current = null;
     }
 
-    const scale = getScale();
     const ground = Matter.Bodies.rectangle(WORLD_WIDTH / 2, WORLD_HEIGHT - 10, WORLD_WIDTH, 20, { isStatic: true, label: 'ground' });
     const leftWall = Matter.Bodies.rectangle(10, WORLD_HEIGHT / 2, 20, WORLD_HEIGHT, { isStatic: true, label: 'wall' });
     const rightWall = Matter.Bodies.rectangle(WORLD_WIDTH - 10, WORLD_HEIGHT / 2, 20, WORLD_HEIGHT, { isStatic: true, label: 'wall' });
