@@ -3,112 +3,142 @@ html, body, #root {
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* 스크롤바 제거 */
+  overflow: hidden;
   background-color: #f0f0f0;
+  touch-action: none; /* 모바일에서 더블탭 확대 등 기본 동작 방지 */
 }
 
 .App {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100%;
+  justify-content: center; /* 중앙 정렬로 변경 */
+  height: calc(var(--vh, 1vh) * 100);
   width: 100%;
-  padding: 10px;
+  padding: 20px;
   box-sizing: border-box;
 }
 
+.game-header {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.restart-button {
+  padding: 10px 20px; /* 패딩 증가 */
+  font-size: clamp(16px, 4vw, 20px); /* 글꼴 크기 증가 */
+  cursor: pointer;
+  border: 2px solid #4CAF50; /* 테두리 추가 */
+  background-color: #4CAF50; /* 배경색 */
+  color: white; /* 글자색 */
+  border-radius: 8px; /* 둥근 모서리 */
+  white-space: nowrap;
+  transition: background-color 0.3s ease, transform 0.1s ease; /* 호버 및 클릭 효과 */
+}
+
+.restart-button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+.restart-button:active {
+  transform: translateY(0);
+}
+
 h1 {
-  font-size: clamp(24px, 5vw, 40px); /* 화면 크기에 따라 조절, 최소/최대 크기 지정 */
-  margin: 0;
-  margin-bottom: 10px;
+  font-size: clamp(28px, 8vw, 48px);
   color: #333;
-  text-align: center;
+  margin: 0; /* h1의 기본 마진 제거 */
 }
 
 .game-container {
   width: 100%;
-  max-width: 400px; /* 데스크탑에서 너무 커지지 않도록 */
-  aspect-ratio: 400 / 700; /* 게임 화면 비율 유지 */
-  border: 2px solid #333;
+  max-width: 420px; /* 최대 너비 살짝 증가 */
+  max-height: 90vh; /* 화면 높이의 90%를 넘지 않도록 */
+  aspect-ratio: 400 / 700;
   position: relative;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  background-color: white;
+  border: 3px solid #444; /* 테두리 강화 */
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  background-color: #fafafa;
+  touch-action: none;
+  overflow: hidden; /* 캔버스 영역을 벗어나는 내용 숨김 */
 }
 
-.game-info {
-  margin-top: 15px;
-  text-align: center;
-  font-size: clamp(16px, 4vw, 22px);
-  color: #444;
-}
-
-.game-info p {
-  margin: 4px 0;
-}
-
-.game-over-container {
-  margin-top: 15px;
-  text-align: center;
-}
-
-.game-over-container p {
-  color: red;
-  font-weight: bold;
-  font-size: clamp(20px, 5vw, 30px);
-  margin: 0 0 10px 0;
-}
-
-.game-over-container button {
-  padding: 10px 20px;
-  font-size: clamp(16px, 4vw, 20px);
-  cursor: pointer;
-  border: none;
-  background-color: #4CAF50;
-  color: white;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-
-.game-over-container button:hover {
-  background-color: #45a049;
-}
-
-.loading-indicator {
+/* Matter.js 캔버스가 이 컨테이너 안에 생성됨 */
+.game-container > canvas {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: clamp(18px, 4vw, 24px);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: top left; /* 스케일링의 기준점을 왼쪽 위로 설정 */
+}
+
+.fruit-order-guide {
+  width: 100%;
+  max-width: 420px; /* game-container와 동일한 너비 */
+  margin-top: 10px;
+  text-align: center;
+  font-size: clamp(12px, 3vw, 16px);
+  color: #666;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 0 10px;
+}
+
+.fruit-order-guide p {
+  margin: 0;
+}
+
+.game-stats {
+  text-align: right;
   color: #333;
+  font-size: clamp(14px, 3.5vw, 18px);
+  display: flex; /* Flexbox를 사용하여 내부 요소 정렬 */
+  flex-direction: column; /* 세로 정렬 */
+  align-items: flex-end; /* 오른쪽 정렬 */
+  flex-wrap: wrap; /* 내용이 넘칠 경우 다음 줄로 */
+  padding: 0 5px; /* 내부 여백 조정 */
 }
 
-@keyframes fade-out-scale-up {
-  from {
-    transform: scale(0.5);
-    opacity: 1;
-  }
-  to {
-    transform: scale(1.5);
-    opacity: 0;
-  }
+.game-stats p {
+  margin: 0;
 }
 
-.particle {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  animation: fade-out-scale-up 0.5s forwards;
-  transform-origin: center;
+.game-message-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  gap: 10px; /* 메시지와 버튼 사이 간격 */
+  margin-top: 5px; /* 점수와의 간격 */
+  max-width: 100%; /* 부모 너비를 초과하지 않도록 */
+  box-sizing: border-box; /* 패딩을 너비에 포함 */
+}
+
+.game-message-container p {
+  font-weight: bold;
+  font-size: clamp(18px, 5vw, 28px); /* 메시지 글꼴 크기 더 키움 */
+  margin: 0;
+  white-space: nowrap; /* 줄바꿈 방지 */
+}
+
+.loading-indicator, .preview-fruit {
+  pointer-events: none; /* 클릭/터치 이벤트 통과 */
 }
 
 .preview-fruit {
   position: absolute;
-  top: 0px;
   border-radius: 50%;
   opacity: 0.6;
   pointer-events: none;
   display: none;
   z-index: 1;
   background-size: 100% 100%;
+  transform-origin: top left; /* 스케일링 및 위치 변환의 기준점 */
 }
