@@ -209,21 +209,7 @@ function App() {
         }, 500);
     }, [gameOver, nextFruitIndex, canDrop]); // canDrop을 의존성 배열에 추가
 
-    const getScaledCoordinates = useCallback((clientX: number) => {
-        if (!sceneRef.current || !renderRef.current) return { x: 0, y: 0 };
-        const rect = sceneRef.current.getBoundingClientRect();
-        const canvas = renderRef.current.canvas;
-
-        const scaleMatch = canvas.style.transform.match(/scale\((.+?)\)/);
-        const scale = scaleMatch ? parseFloat(scaleMatch[1]) : 1;
-
-        const canvasOffsetLeft = parseFloat(canvas.style.left || '0');
-
-        const relativeX = clientX - rect.left;
-        const worldX = (relativeX - canvasOffsetLeft) / scale;
-        
-        return { x: worldX, y: 0 };
-    }, []);
+    
 
     const handleInteractionStart = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
         e.preventDefault(); // 터치 이벤트의 기본 동작(확대/스크롤, 클릭 이벤트 발생) 방지
