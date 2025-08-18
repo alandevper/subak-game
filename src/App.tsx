@@ -19,6 +19,8 @@ const FRUITS = [
 
 const WORLD_WIDTH = 400;
 const WORLD_HEIGHT = 700;
+const INITIAL_FRUIT_RANGE = 4; // 난이도 조절: 0부터 이 숫자 -1 까지의 과일이 나옵니다. (4로 설정 시 귤까지)
+const WINNING_FRUIT_INDEX = 10; // 게임 성공 조건: 이 인덱스에 해당하는 과일이 생성되면 게임 성공 (10: 수박)
 
 function App() {
     const sceneRef = useRef<HTMLDivElement>(null);
@@ -30,7 +32,8 @@ function App() {
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
     const [gameSuccess, setGameSuccess] = useState(false);
-    const [nextFruitIndex, setNextFruitIndex] = useState(0);
+    const [currentFruitIndex, setCurrentFruitIndex] = useState(Math.floor(Math.random() * INITIAL_FRUIT_RANGE));
+    const [nextFruitIndex, setNextFruitIndex] = useState(Math.floor(Math.random() * INITIAL_FRUIT_RANGE));
     const [imagesLoaded, setImagesLoaded] = useState(false);
     const [canDrop, setCanDrop] = useState(true); // canDrop 상태 추가
 
@@ -81,7 +84,8 @@ function App() {
         setScore(0);
         setGameOver(false);
         setGameSuccess(false); // 게임 성공 상태 초기화
-        setNextFruitIndex(Math.floor(Math.random() * 5));
+        setCurrentFruitIndex(Math.floor(Math.random() * INITIAL_FRUIT_RANGE));
+        setNextFruitIndex(Math.floor(Math.random() * INITIAL_FRUIT_RANGE));
         setCanDrop(true); // 게임 재시작 시 canDrop을 true로 설정
     }, []);
 
@@ -131,8 +135,8 @@ function App() {
                         Matter.World.add(engine.world, newFruit);
                         setScore((prevScore) => prevScore + nextFruitData.score);
 
-                        // 새로 생성된 과일이 '수박'이면 게임 성공
-                        if (FRUITS[fruitIndex].nextFruitIndex === -1) {
+                        // 새로 생성된 과일이 성공 조건에 해당하면 게임 성공
+                        if (FRUITS[fruitIndex].nextFruitIndex === WINNING_FRUIT_INDEX) {
                             setGameSuccess(true);
                         }
                     }
@@ -194,20 +198,22 @@ function App() {
         if (gameOver || gameSuccess || !canDrop) return; // canDrop 상태 확인 및 게임 성공 시 과일 생성 방지
         setCanDrop(false); // 과일 생성 후 canDrop을 false로 설정
 
-        const fruit = FRUITS[nextFruitIndex];
+        const fruit = FRUITS[currentFruitIndex];
         const newFruit = Matter.Bodies.circle(x, 20, fruit.radius, {
-            label: `fruit-${nextFruitIndex}`,
+            label: `fruit-${currentFruitIndex}`,
             render: { sprite: { texture: fruit.image, xScale: (fruit.radius * 2) / fruit.originalWidth, yScale: (fruit.radius * 2) / fruit.originalHeight } },
             restitution: 0.2,
         });
         Matter.World.add(engineRef.current.world, newFruit);
-        setNextFruitIndex(Math.floor(Math.random() * 5));
+        
+        setCurrentFruitIndex(nextFruitIndex);
+        setNextFruitIndex(Math.floor(Math.random() * INITIAL_FRUIT_RANGE));
 
         // 0.5초 후 canDrop을 다시 true로 설정
         setTimeout(() => {
             setCanDrop(true);
         }, 500);
-    }, [gameOver, nextFruitIndex, canDrop]); // canDrop을 의존성 배열에 추가
+    }, [gameOver, gameSuccess, canDrop, currentFruitIndex, nextFruitIndex]);
 
     
 
@@ -230,7 +236,7 @@ function App() {
         const scaleMatch = canvas.style.transform.match(/scale\((.+?)\)/);
         const currentScale = scaleMatch ? parseFloat(scaleMatch[1]) : 1;
 
-        const fruit = FRUITS[nextFruitIndex];
+        const fruit = FRUITS[currentFruitIndex];
         const preview = previewFruitRef.current;
 
         const previewSize = fruit.radius * 2 * currentScale;
@@ -248,19 +254,19 @@ function App() {
         const worldX = relativeX / currentScale; 
         lastMouseXRef.current = worldX; // 마지막 마우스 X 위치 업데이트
 
-    }, [nextFruitIndex, gameSuccess, gameOverRef]);
+    }, [currentFruitIndex, gameSuccess, gameOverRef]);
 
     const handleInteractionEnd = useCallback(() => {
         if (gameOverRef.current || gameSuccess || !canDrop) return; // 게임 오버이거나 드롭 불가능하면 리턴
 
         // 과일 추가
-        addFruit(Math.max(FRUITS[nextFruitIndex].radius, Math.min(lastMouseXRef.current, WORLD_WIDTH - FRUITS[nextFruitIndex].radius)));
+        addFruit(Math.max(FRUITS[currentFruitIndex].radius, Math.min(lastMouseXRef.current, WORLD_WIDTH - FRUITS[currentFruitIndex].radius)));
 
         // 과일이 떨어지면 미리보기 숨김
         if (previewFruitRef.current) {
             previewFruitRef.current.style.display = 'none';
         }
-    }, [addFruit, canDrop, nextFruitIndex, gameOverRef, gameSuccess]);
+    }, [addFruit, canDrop, currentFruitIndex, gameOverRef, gameSuccess]);
 
     const hidePreview = useCallback(() => {
         if (previewFruitRef.current) {
@@ -271,7 +277,7 @@ function App() {
     useEffect(() => {
         if (!previewFruitRef.current || !imagesLoaded || !renderRef.current) return;
 
-        const fruit = FRUITS[nextFruitIndex];
+        const fruit = FRUITS[currentFruitIndex];
         const preview = previewFruitRef.current;
 
         preview.style.backgroundImage = `url(${fruit.image})`;
@@ -291,7 +297,7 @@ function App() {
             preview.style.display = 'none';
         }
 
-    }, [nextFruitIndex, imagesLoaded, gameOverRef, gameSuccess, renderRef]);
+    }, [currentFruitIndex, imagesLoaded, gameOverRef, gameSuccess, renderRef]);
 
     useEffect(() => {
         const gameContainer = sceneRef.current;
