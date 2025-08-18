@@ -262,10 +262,7 @@ function App() {
         // 과일 추가
         addFruit(Math.max(FRUITS[currentFruitIndex].radius, Math.min(lastMouseXRef.current, WORLD_WIDTH - FRUITS[currentFruitIndex].radius)));
 
-        // 과일이 떨어지면 미리보기 숨김
-        if (previewFruitRef.current) {
-            previewFruitRef.current.style.display = 'none';
-        }
+        
     }, [addFruit, canDrop, currentFruitIndex, gameOverRef, gameSuccess]);
 
     const hidePreview = useCallback(() => {
