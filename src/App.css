@@ -15,8 +15,13 @@ html, body, #root {
   justify-content: center; /* 중앙 정렬로 변경 */
   height: calc(var(--vh, 1vh) * 100);
   width: 100%;
-  padding: 20px 20px 80px;
+  padding: 20px;
   box-sizing: border-box;
+  transition: padding-bottom 0.3s ease; /* 부드러운 높이 변경 효과 */
+}
+
+.App.with-install-button {
+  padding-bottom: 80px;
 }
 
 .game-header {
@@ -92,23 +97,39 @@ h1 {
 }
 
 .fruit-order-guide {
-  width: 100%;
-  max-width: 420px; /* game-container와 동일한 너비 */
-  margin-top: 10px;
-  text-align: center;
-  font-size: clamp(8px, 2.2vw, 10px); /* 글자 크기 더 축소 */
-  font-weight: bold; /* 폰트 굵게 */
-  color: #666;
-  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  max-width: 420px;
+  overflow-x: auto;
+  padding: 8px 10px;
   box-sizing: border-box;
-  padding: 0 10px;
-  white-space: nowrap; /* 줄바꿈 방지 */
-  overflow: hidden; /* 내용이 넘칠 경우 숨김 */
-  text-overflow: ellipsis; /* 내용이 넘칠 경우 ...으로 표시 */
+  background: rgba(0,0,0,0.05);
+  border-radius: 10px;
+  margin-top: 10px;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
-.fruit-order-guide p {
-  margin: 0;
+.fruit-order-guide::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+}
+
+.fruit-guide-item {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.fruit-guide-item img {
+  height: 25px; /* Icon size */
+  width: auto;
+  margin: 0 2px;
+}
+
+.fruit-guide-arrow {
+  font-size: 20px;
+  color: #888;
+  font-weight: bold;
 }
 
 .game-stats {

@@ -341,7 +341,7 @@ function App() {
     };
 
     return (
-        <div className="App">
+        <div className={`App ${installPrompt ? 'with-install-button' : ''}`}>
             <div className="game-header">
                 <h1>수박 게임</h1>
                 <div className="header-buttons">
@@ -372,7 +372,12 @@ function App() {
                 <div ref={previewFruitRef} className="preview-fruit"></div>
             </div>
             <div className="fruit-order-guide">
-                <p>순서: {FRUITS.map(fruit => fruit.name).join(' > ')}</p>
+                {FRUITS.map((fruit, index) => (
+                    <div key={fruit.name} className="fruit-guide-item">
+                        <img src={fruit.image} alt={fruit.name} />
+                        {index < FRUITS.length - 1 && <span className="fruit-guide-arrow">›</span>}
+                    </div>
+                ))}
             </div>
             {(!gameOver && !gameSuccess) && !imagesLoaded && <div className="loading-indicator">로딩 중...</div>}
             {installPrompt && (
