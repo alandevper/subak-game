@@ -36,9 +36,23 @@ function App() {
     const [nextFruitIndex, setNextFruitIndex] = useState(Math.floor(Math.random() * INITIAL_FRUIT_RANGE));
     const [imagesLoaded, setImagesLoaded] = useState(false);
     const [canDrop, setCanDrop] = useState(true); // canDrop 상태 추가
+    const [installPrompt, setInstallPrompt] = useState<any>(null); // PWA 설치 프롬프트 상태
 
     const gameOverRef = useRef(gameOver);
     gameOverRef.current = gameOver;
+
+    useEffect(() => {
+        const handleBeforeInstallPrompt = (e: Event) => {
+            e.preventDefault();
+            setInstallPrompt(e);
+        };
+
+        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+        return () => {
+            window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        };
+    }, []);
 
     useEffect(() => {
         const setAppHeight = () => {
@@ -315,13 +329,26 @@ function App() {
         };
     }, [handleInteractionStart, handleInteractionMove, handleInteractionEnd]);
 
+    const handleInstallClick = async () => {
+        if (!installPrompt) {
+            return;
+        }
+        installPrompt.prompt();
+        const { outcome } = await installPrompt.userChoice;
+        if (outcome === 'accepted') {
+            setInstallPrompt(null);
+        }
+    };
+
     return (
         <div className="App">
             <div className="game-header">
                 <h1>수박 게임</h1>
-                {(gameOver || gameSuccess) && (
-                    <button onClick={resetGame} className="restart-button">다시 시작</button>
-                )}
+                <div className="header-buttons">
+                    {(gameOver || gameSuccess) && (
+                        <button onClick={resetGame} className="restart-button">다시 시작</button>
+                    )}
+                </div>
                 <div className="game-stats">
                     <p>점수: {score}</p>
                     {(gameOver || gameSuccess) ? (
@@ -348,6 +375,11 @@ function App() {
                 <p>순서: {FRUITS.map(fruit => fruit.name).join(' > ')}</p>
             </div>
             {(!gameOver && !gameSuccess) && !imagesLoaded && <div className="loading-indicator">로딩 중...</div>}
+            {installPrompt && (
+                <button onClick={handleInstallClick} className="install-button">
+                    앱 설치
+                </button>
+            )}
         </div>
     );
 }
