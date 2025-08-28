@@ -17,7 +17,7 @@ const FRUITS = [
     { radius: 120, color: '#00BFFF', name: '수박', score: 110, nextFruitIndex: -1, image: '/fruits/10_watermelon.png', originalWidth: 259, originalHeight: 259 },
 ];
 
-const WORLD_WIDTH = 400;
+const WORLD_WIDTH = 420;
 const WORLD_HEIGHT = 700;
 const INITIAL_FRUIT_RANGE = 4; // 난이도 조절: 0부터 이 숫자 -1 까지의 과일이 나옵니다. (4로 설정 시 귤까지)
 const WINNING_FRUIT_INDEX = 10; // 게임 성공 조건: 이 인덱스에 해당하는 과일이 생성되면 게임 성공 (10: 수박)
